@@ -1,11 +1,18 @@
 library(tidyverse)
 library(here)
 
+setwd("D:/ngs storage/Natalie/R255X E488QD/emergeR/")
 here::i_am("integration/one_hot_encoding.R")
 
+indir  <- "data"
+infile <- "R255X_E488QD_clean.csv"
 
-clean_data <- read_csv(here("data", "R255X_E488QD_clean.csv"))
 
+# ============================================================================ #
+# One-hot encode sequence data to prepare it for a GLM
+# (Deprecated; kept alive as a reference for future TODO)
+
+clean_data <- read_csv(here(indir, infile))
 
 nucleotides <- c("A", "T", "C", "G")
 sequences   <- clean_data$N10

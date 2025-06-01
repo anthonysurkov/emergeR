@@ -1,5 +1,10 @@
 library(ShortRead)
 
+setwd("D:/ngs storage/Natalie/R255X E488QD/emergeR/")
+here::i_am("integration/casey_pipeline.R")
+
+
+# ============================================================================ #
 
 # R255XE488Q
 # GGGAATGGCGCTTCCCGGCA GGAAGT GAA AAGCTG AGGCCGACTTTCTTTCTTTCGTCG GCCTCA NNNNNNNNNN TCCTGC CGGGTTGTAGGGTC
@@ -37,7 +42,6 @@ output_file <- "../data/R255X_E488QD_casey_output.csv"
 
 # ============================================================================ #
 
-
 # casey_pipeline()
 # Generalized adaptation of Casey's EMERGe pipeline.
 # Reference: https://github.com/csjacobsen/EMERGe/blob/bioinformatics/Rstudio%20processing%20R168X
@@ -63,8 +67,6 @@ casey_pipeline <- function() {
   write.csv(mk_table, output_file)
 }
 
-
-
 # validate_hairpin_indices()
 # Double checks that the provided indices produce the expected sub sequence.
 validate_hairpin_indices <- function(expected) {
@@ -89,8 +91,6 @@ validate_hairpin_indices <- function(expected) {
   message("validate_hairpin_indices: subsequence indices OK")
   return(TRUE)
 }
-
-
 
 main <- function() {
   expected <- "GGAAGTAAGCTGGCCTCATCCTGC"    # combination of all flank sequences

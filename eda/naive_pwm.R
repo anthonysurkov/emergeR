@@ -8,15 +8,19 @@ here::i_am("eda/naive_pwm.R")
 infile <- "R255X_E488QD_clean.csv"
 indir  <- "data"
 
+epsilon <- 0.01
+
 
 # ============================================================================ #
+# Are there any trends in sequence identity between editors & non-editors?
+# (naive because latent structure in each group is not exposed)
 
 main <- function() {
   data <- read_csv(here(indir, infile))
   
   all_seqs   <- data %>% pull(N10)
-  edit_seqs  <- data %>% filter(edit != 0) %>% pull(N10)
-  other_seqs <- data %>% filter(edit == 0) %>% pull(N10)
+  edit_seqs  <- data %>% filter(map >= epsilon) %>% pull(N10)
+  other_seqs <- data %>% filter(map < epsilon)  %>% pull(N10)
   
   all_logo <- ggseqlogo(all_seqs, method="bits") +
     ggtitle("R255X E488Qd: All Sequences")
