@@ -2,7 +2,7 @@ library(tidyverse)
 library(here)
 
 setwd("D:/ngs storage/Natalie/R255X E488QD/emergeR/")
-here::i_am("integration/bayes.R")
+here::i_am("pipeline/archive/integration")
 
 infile <- "R255X_E488QD_clean.csv"
 indir  <- "data"

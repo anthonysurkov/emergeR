@@ -5,9 +5,9 @@ library(transport)
 library(scales)
 
 setwd("D:/ngs storage/Natalie/R255X E488QD/emergeR/")
-here::i_am("eda/edits/frequentist/edits_distribution.R")
+here::i_am("eda/edits/edits_distribution.R")
 
-infile <- "R255X_E488QD_clean.csv"
+infile <- "R255X_E488QD_3_cleaned.csv"
 indir  <- "data"
 
 
@@ -18,9 +18,8 @@ indir  <- "data"
 main <- function() {
   # Data
   data_all <- read_csv(here(indir, infile))
-  data_all <- data_all %>% filter(edit > 0)
   
-  k <- data_all %>% pull(GGA)
+  k <- data_all %>% pull(k)
   N <- data_all %>% pull(n)
   epsilon  <- 0.01
   
