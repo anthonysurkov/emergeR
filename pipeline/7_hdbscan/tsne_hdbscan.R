@@ -1,14 +1,13 @@
 library(tidyverse)
 library(dbscan)
 library(here)
-source("pipeline/5_mca/mca_vis.R")
 
 setwd("D:/ngs storage/Natalie/R255X E488QD/emergeR/")
 here::i_am("pipeline/7_hdbscan/tsne_hdbscan.R")
 
 indir   <- "data"
-infile  <- "R255X_E488QD_6_tSNE.csv"
-outfile <- "R255X_E488QD_7_tSNEclustered.csv"
+infile  <- "R255X_E488QD_6b_tSNEok.csv"
+outfile <- "R255X_E488QD_7b_tSNEokclustered.csv"
 
 
 # ============================================================================ #

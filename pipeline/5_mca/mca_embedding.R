@@ -3,12 +3,12 @@ library(ade4)
 library(here)
 
 setwd("D:/ngs storage/Natalie/R255X E488QD/emergeR/")
-here::i_am("eda/mca/mca_embedding.R")
+here::i_am("pipeline/5_mca/mca_embedding.R")
 
 indir     <- "data"
-infile    <- "R255X_E488QD_2_clean.csv"
-outfile_a <- "R255X_E488QD_3a_topeditors.csv"
-outfile_b <- "R255X_E488QD_3b_alleditors.csv"
+infile    <- "R255X_E488QD_4_CVEB.csv"
+outfile_a <- "R255X_E488QD_5a_MCAtopeditors.csv"
+outfile_b <- "R255X_E488QD_5b_MCAokeditors.csv"
 
 # Globals
 L <- 10 # sequence length
@@ -38,7 +38,7 @@ main <- function() {
   mca  <- dudi.acm(df = Xfac, nf = 50, scannf = FALSE) # conduct MCA
   
   top_cutoff <- quantile(X$map, 0.999)                       # 99.9th %tile
-  edit_0.02  <- get_MCs(X = X, mca = mca, edit = 0.02)       # get >2% editors
+  edit_0.02  <- get_MCs(X = X, mca = mca, edit = 0.05)       # get >5% editors
   edit_top   <- get_MCs(X = X, mca = mca, edit = top_cutoff) # get top editors
   
   print(mca$eig)        # observe eigenvalues

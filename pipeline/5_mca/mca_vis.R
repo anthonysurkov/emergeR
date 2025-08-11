@@ -59,7 +59,7 @@ make_seq_logos <- function(X_emb) {
 }
 
 # Visualizes editing in MCA space
-make_editing_vis <- function(X_emb) {
+mca_editing_vis <- function(X_emb) {
   p <- ggplot(X_emb, aes(Axis1, Axis2, colour = map)) +
     geom_point(size = 1.0, alpha = 0.40) +
     scale_colour_gradientn(
@@ -107,7 +107,7 @@ make_editing_vis <- function(X_emb) {
 }
 
 # Visualizes MCA clustering via colored MC1/2 plot
-make_cluster_vis <- function(X_emb) {
+mca_cluster_vis <- function(X_emb) {
   p <- ggplot(X_emb, aes(Axis1, Axis2, colour = cluster)) +
     geom_point(size = 1.0, alpha = 0.40) +
     guides(
@@ -152,8 +152,8 @@ make_cluster_vis <- function(X_emb) {
 mca_tri_vis <- function(X, outpdf) {
   seq_logos   <- make_seq_logos(X)
   
-  cluster_vis <- make_cluster_vis(X)
-  editing_vis <- make_editing_vis(X)
+  cluster_vis <- mca_cluster_vis(X)
+  editing_vis <- mca_editing_vis(X)
   combined    <- c(
     list(cluster_vis, editing_vis), seq_logos
   )
@@ -168,4 +168,4 @@ main <- function() {
   mca_tri_vis(X, outpdf = outpdf)
 }
 
-main()
+#main()

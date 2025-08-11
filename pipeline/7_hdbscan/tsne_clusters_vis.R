@@ -9,15 +9,15 @@ here::i_am("pipeline/7_hdbscan/tsne_clusters_vis.R")
 
 indir  <- "data"
 outdir <- "data"
-infile <- "R255X_E488QD_7_tSNEclustered.csv"
-outpdf <- "R255X_E488QD_7_report.pdf"
+infile <- "R255X_E488QD_7a_toptSNEclustered.csv"
+outpdf <- "R255X_E488QD_7a_reporttop.pdf"
 
 
 # ============================================================================ #
 # Generates a report visualizing a clustered t-SNE data set.
 
 # Visualizes editing in MCA space
-make_editing_vis <- function(X_emb) {
+tsne_editing_vis <- function(X_emb) {
   p <- ggplot(X_emb, aes(tsne1, tsne2, colour = map)) +
     geom_point(size = 1.0, alpha = 0.40) +
     scale_colour_gradientn(
@@ -48,9 +48,9 @@ make_editing_vis <- function(X_emb) {
       legend.box.margin = margin(0, 0, 0, 0)
     ) +
     labs(
-      x = "MC1",
-      y = "MC2",
-      title = "MCA of Editing-Capable Guides",
+      x = "TSNE1",
+      y = "TSNE2",
+      title = "t-SNE of Embedded Editing-Capable Guides",
       subtitle = "99.9th percentile Maximum A Posteriori Editors"
     ) +
     scale_y_continuous(
@@ -65,7 +65,7 @@ make_editing_vis <- function(X_emb) {
 }
 
 # Visualizes MCA clustering via colored MC1/2 plot
-make_cluster_vis <- function(X_emb) {
+tsne_cluster_vis <- function(X_emb) {
   p <- ggplot(X_emb, aes(tsne1, tsne2, colour = cluster)) +
     geom_point(size = 1.0, alpha = 0.40) +
     scale_colour_discrete(
@@ -93,9 +93,9 @@ make_cluster_vis <- function(X_emb) {
       legend.box.margin = margin(0, 0, 0, 0)
     ) +
     labs(
-      x = "MC1",
-      y = "MC2",
-      title = "MCA of Editing-Capable Guides",
+      x = "TSNE1",
+      y = "TSNE2",
+      title = "t-SNE of Embedded Editing-Capable Guides",
       subtitle = "99.9th percentile Maximum A Posteriori Editors"
     ) +
     scale_y_continuous(
@@ -113,8 +113,8 @@ make_cluster_vis <- function(X_emb) {
 tsne_tri_vis <- function(X, outpdf) {
   seq_logos   <- make_seq_logos(X) # from mca_vis.R
   
-  cluster_vis <- make_cluster_vis(X)
-  editing_vis <- make_editing_vis(X)
+  cluster_vis <- tsne_cluster_vis(X)
+  editing_vis <- tsne_editing_vis(X)
   combined    <- c(
     list(cluster_vis, editing_vis), seq_logos
   )
