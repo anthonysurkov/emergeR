@@ -18,6 +18,7 @@ indir  <- "data"
 main <- function() {
   # Data
   data_all <- read_csv(here(indir, infile))
+  data_all <- data_all %>% filter(mle > 0)
   
   k <- data_all %>% pull(k)
   N <- data_all %>% pull(n)
@@ -67,7 +68,7 @@ main <- function() {
   
   df_plot <- data.frame(
     EditingRate = c(edit_rate_obs, edit_rate_sim),
-    Source = rep(c("Observed", "Simulated"), each = length(N))
+    Source = rep(c("Simulated", "Observed"), each = length(N))
   )
   dens_plot <- ggplot(df_plot, aes(x = EditingRate, fill = Source)) +
     geom_density(alpha = 0.2) +

@@ -1,0 +1,6 @@
+Diagnostics:
+Alpha_hat: 1.408648 
+Beta_hat: 94.27784 
+RMSE: 0.02866317 
+MAE: 0.01331725 
+Wasserstein distance: 0.01318123 
