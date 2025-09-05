@@ -1,0 +1,16 @@
+.git
+.gitignore
+README.md
+archive/
+dev/
+.Rhistory
+.Rproj.user
+.RData
+.DS_Store
+.Rbuildignore
+.Rproj
+*.tar.gz
+*.Rcheck/
+renv/
+renv.lock
+packrat/

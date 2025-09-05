@@ -3,8 +3,11 @@
 .Rproj.user/
 
 rev/library/
+src/pipeline/archive/
+tests/
 
-scratch/
+dev/
+archive/
 data/
 *.log
 

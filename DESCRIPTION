@@ -1,0 +1,42 @@
+Package: emergeR
+Type: Package
+Title: Analysis of EMERGe High-Throughput Editing Data
+Version: 1.0.0
+Authors@R: c(
+ person("Anthony", "Surkov", email = "anthonysurkov@gmail.com",
+ role = c("aut", "cre"))
+ )
+Description: Tools for processing, modeling, and visualizing EMERGe
+ (En Masse Evaluation of RNA Guides) high-throughput editing datasets,
+ including beta-binomial statistics, MCA/t-SNE embeddings, HDBSCAN clustering,
+ and motif visualization.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE, roclets = c("namespace", "rd"))
+RoxygenNote: 7.3.3
+Imports:
+ dplyr,
+ purrr,
+ tidyr,
+ tibble,
+ magrittr,
+ tidyselect,
+ stats,
+ binom,
+ ade4,
+ Rtsne,
+ dbscan,
+ ggplot2,
+ ggprism,
+ ggseqlogo,
+ scales,
+ Biostrings,
+ IRanges,
+ S4Vectors,
+ rlang
+Suggests:
+ testthat (>= 3.0.0),
+ knitr,
+ markdown
+Config/testthat/edition: 3
