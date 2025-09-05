@@ -1,0 +1,16 @@
+^\.github/
+^\.git/
+^\.gitignore$
+^\.dockerignore$
+^Dockerfile$
+^docker-compose\.yml$
+^dev/
+^archive/
+^README\.Rmd$
+^renv\.lock$
+^renv/
+^.*\.Rproj$
+^\.Rproj\.user/
+^\.Rhistory$
+^\.RData$
+^LICENSE\.md$

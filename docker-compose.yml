@@ -1,18 +1,19 @@
 services:
-    dev:
+    base:
+        &base
         build: .
-        image: rocker/r2u:latest
+        image: emerger:base
+    dev:
+        <<: *base
         working_dir: /work
         volumes:
             - ./:/work
         command: R
         tty: true
         stdin_open: true
-
     prod:
-        build: .
+        <<: *base
         working_dir: /pkg
         command: R
         tty: true
         stdin_open: true
-

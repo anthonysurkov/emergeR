@@ -13,4 +13,4 @@ dev/
 *.Rcheck/
 renv/
 renv.lock
-packrat/
+LICENSE.md
