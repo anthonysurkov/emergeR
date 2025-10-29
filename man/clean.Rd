@@ -4,7 +4,7 @@
 \alias{clean}
 \title{Clean an EMERGe dataset after HT Stream preprocessing.}
 \usage{
-clean(fastq_infile, template, flanks)
+clean(fastq_infile, template, flanks, chunk_size = 5e+05)
 }
 \arguments{
 \item{fastq_infile}{(String) Path to a FASTQ file.}
@@ -13,6 +13,9 @@ clean(fastq_infile, template, flanks)
 
 \item{flanks}{Character(4) flank subsequences in expected order,
 (f1, f2, f3, f4).}
+
+\item{chunk_size}{(integer) number of sequences to read at a time from the
+provided fastq.}
 }
 \value{
 A tibble with N10-level summaries: number of reads "n,"

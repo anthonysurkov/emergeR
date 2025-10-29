@@ -4,10 +4,10 @@
 \alias{plot_tsne_clusters}
 \title{Plots t-SNE coordinates colored by cluster assignment.}
 \usage{
-plot_tsne_clusters(X_tsne)
+plot_tsne_clusters(X)
 }
 \arguments{
-\item{X_tsne}{(tibble) EMERGe data with at minimum 'tsne1', 'tsne2', and'cluster' columns.}
+\item{X}{(tibble) EMERGe data with at minimum 'tsne1', 'tsne2', and'cluster' columns.}
 }
 \value{
 (plot) ggprism-formatted plot.

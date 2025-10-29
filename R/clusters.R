@@ -15,7 +15,7 @@
 #' @importFrom dplyr select mutate
 #' @importFrom magrittr %>%
 append_clusters <- function(X, minPts = 10) {
-  stopifnot(all(c("n10", "tsne1", "tsne2")))
+  stopifnot(all(c("n10","tsne1","tsne2") %in% names(X)))
   
   X_tsne <- X %>%
     select(tsne1, tsne2)
@@ -46,12 +46,12 @@ append_clusters <- function(X, minPts = 10) {
 #' @importFrom dplyr group_by group_split pull
 #' @importFrom purrr map_int imap
 #' @importFrom ggseqlogo ggseqlogo
-#' @importFrom ggplot2 ggtitle guides theme element_text
+#' @importFrom ggplot2 ggtitle guides theme element_text element_blank
 #' @importFrom ggprism theme_prism
-plot_motif_logos <- function(X_clustered) {
-  stopifnot(all(c("n10", "cluster")))
+plot_motif_logos <- function(X) {
+  stopifnot(all(c("n10", "cluster") %in% names(X)))
   
-  seq_grouped <- X_clustered %>%
+  seq_grouped <- X %>%
     group_by(cluster) %>%
     group_split(.keep = FALSE) %>%
     { .[ order(map_int(., nrow), decreasing = TRUE) ]}

@@ -1,0 +1,27 @@
+---
+title: "`r params$title`"
+date: "`r params$date`"
+output: html_document
+params:
+  title: "Report Title"
+  date: "`r Sys.Date()`"
+  dataset_name: "unknown"
+  tsne_edits: NULL
+  tsne_clust: NULL
+  seq_logos: NULL
+---
+
+## Basic
+Dataset analyzed: **`r params$dataset_names`**.
+
+## t-SNE plots
+```{r tsne-edits, echo=FALSE, fig.width=6, fig.height=6}
+params$tsne_edits
+```
+```{r tsne-clust, echo=FALSE, fig.width=6, fig.height=6}
+params$tsne_clust
+```
+```{r}
+for (p in params$seq_logos) print(p)
+```
+

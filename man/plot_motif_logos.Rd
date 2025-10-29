@@ -4,7 +4,7 @@
 \alias{plot_motif_logos}
 \title{Plots a sequence logo per each identified EMERGe cluster.}
 \usage{
-plot_motif_logos(X_clustered)
+plot_motif_logos(X)
 }
 \arguments{
 \item{X_clustered}{(tibble) EMERGe data with at minimum 'n10' and 'cluster'

@@ -26,14 +26,14 @@
 append_tsne <- function(
     X_mca, alpha = NULL, h = NULL, 
     seed = NULL, perplexity = 30,
-    verbose = FALSE, max_iter = 30
+    verbose = FALSE, max_iter = 1000
 ) {
-  mca <- X_mca %>% select(starts_with("CS"))
+  mca <- X_mca %>% select(starts_with("Axis"))
   
   n <- nrow(mca)
-  if (alpha == NULL) alpha <- n / 10
-  if (h == NULL) h <- n / alpha
-  if (seed == NULL) set.seed(1)
+  if (is.null(alpha)) alpha <- n / 10
+  if (is.null(h))     h <- n / alpha
+  if (is.null(seed))  set.seed(1)
   
   tsne_fit <- Rtsne(
     as.matrix(mca),
@@ -67,10 +67,10 @@ append_tsne <- function(
 #' @importFrom ggplot2 scale_x_continuous coord_fixed element_text margin
 #' @importFrom ggprism theme_prism
 #' @importFrom scales squish
-plot_tsne_edits <- function(X_tsne) {
-  stopifnot(all(c("n10", "tsne1", "tsne2")))
+plot_tsne_edits <- function(X) {
+  stopifnot(all(c("n10","tsne1","tsne2") %in% names(X)))
   
-  p <- ggplot(X_tsne, aes(tsne1, tsne2, colour = postmean)) +
+  p <- ggplot(X, aes(tsne1, tsne2, colour = postmean)) +
     geom_point(size = 1.0, alpha = 0.40) +
     scale_colour_gradientn(
       colours = c("#b0f3ff", "#003e4c", "#ff0000"),
@@ -119,7 +119,7 @@ plot_tsne_edits <- function(X_tsne) {
 
 #' Plots t-SNE coordinates colored by cluster assignment.
 #' 
-#' @param X_tsne (tibble) EMERGe data with at minimum 'tsne1', 'tsne2', and
+#' @param X (tibble) EMERGe data with at minimum 'tsne1', 'tsne2', and
 #' #        'cluster' columns.
 #' @return (plot) ggprism-formatted plot.
 #' @export
@@ -127,10 +127,11 @@ plot_tsne_edits <- function(X_tsne) {
 #' @importFrom ggplot2 ggplot aes geom_point scale_colour_gradientn guides
 #' @importFrom ggplot2 guide_legend theme labs scale_y_continuous
 #' @importFrom ggplot2 scale_x_continuous coord_fixed element_text margin
+#' @importFrom ggplot2 scale_colour_discrete
 #' @importFrom ggprism theme_prism
 #' @importFrom scales squish
-plot_tsne_clusters <- function(X_tsne) {
-  stopifnot(all(c("n10", "tsne1", "tsne2")))
+plot_tsne_clusters <- function(X) {
+  stopifnot(all(c("n10","tsne1","tsne2") %in% names(X)))
   
   p <- ggplot(X, aes(tsne1, tsne2, colour = cluster)) +
     geom_point(size = 1.0, alpha = 0.40) +

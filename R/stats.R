@@ -33,9 +33,8 @@
 #' }
 #'
 #' @importFrom dplyr mutate if_else select left_join 
-#' @importFrom dplyr arrange group_by summarise n
+#' @importFrom dplyr arrange group_by summarise n group_nest
 #' @importFrom purrr map map2 pmap
-#' @importFrom tidyr group_nest
 #' @importFrom tibble tibble
 #' @importFrom binom binom.confint
 #' @importFrom stats optim qbeta
@@ -54,11 +53,10 @@ append_stats <- function(
       upper_ci = cis$upper
     )
   
-  cv_eb_out <- cv_eb(data = X_clean, num_folds = num_folds, seed = seed)
-  X_bayes <- cv_eb_out$X_bayes
+  cv_eb_out <- cv_eb(X_clean = X_clean, num_folds = num_folds, seed = seed)
   
   X_out <- X_mle %>%
-    left_join(X_bayes$eb_data, by = "n10") %>%
+    left_join(cv_eb_out$X_bayes, by = "n10") %>%
     arrange(
       n10, n, k,
       mle, lower_ci, upper_ci,
@@ -83,16 +81,14 @@ append_stats <- function(
 #' 
 #' @keywords internal
 #' @noRd
-#'
-#' @importFrom stats lchoose lbeta optim
 fit_bb_mle <- function(k, n, start = c(0, 0), method = "L-BFGS-B") {
   bb_loglik <- function(par, k, n) {
     a <- exp(par[1])
     b <- exp(par[2])
     sum(
       lchoose(n, k) +
-      lbeta(k + a, n - k + b) -
-      lbeta(a, b)
+        lbeta(k + a, n - k + b) -
+        lbeta(a, b)
     )
   }
   opt <- optim(
@@ -130,8 +126,6 @@ post_mean <- function(k, n, alpha, beta) (k + alpha) / (n + alpha + beta)
 #'
 #' @keywords internal
 #' @noRd
-#'
-#' @importFrom stats lchoose lbeta
 dbb_logpmf <- function(k, n, alpha, beta) {
   lchoose(n, k) +
     lbeta(k + alpha, n - k + beta) -
@@ -181,14 +175,13 @@ dbb_logpmf <- function(k, n, alpha, beta) {
 #' @importFrom dplyr mutate select arrange filter group_nest left_join
 #' @importFrom purrr map map2 pmap
 #' @importFrom tibble tibble
-#' @importFrom tidy group_nest
 #' @importFrom stats qbeta
 #' @importFrom dplyr any_of bind_rows
 cv_eb <- function(X_clean, num_folds, seed = NULL) {
   stopifnot(all(c("n10", "k", "n") %in% names(X_clean)))
   if (!is.null(seed)) set.seed(seed)
   
-  data <- data %>%
+  X_clean <- X_clean %>%
     mutate(fold = sample(rep(1:num_folds, length.out = nrow(.))))
   
   results <- X_clean %>%
@@ -258,8 +251,9 @@ cv_eb <- function(X_clean, num_folds, seed = NULL) {
     mutate(fold = as.integer(fold_id)) %>% select(-fold_id)
   
   X_bayes <- X_clean %>%
-    select(-any_of(c(n, k, mle, lower_ci, upper_ci))) %>%
+    select(-any_of(c("n", "k", "mle", "lower_ci", "upper_ci"))) %>%
     left_join(preds_all, by="n10") %>%
+    select(-fold.x, -fold.y) %>%
     arrange(
       n10, postmean, upper_cred, lower_cred, alpha, beta
     )

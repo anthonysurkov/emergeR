@@ -6,7 +6,6 @@ rev/library/
 src/pipeline/archive/
 tests/
 
-dev/
 archive/
 data/
 *.log

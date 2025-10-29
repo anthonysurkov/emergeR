@@ -1,0 +1,174 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div style="text-align:center; margin-bottom: 20px;">
+            <h2 style="margin:0;">R255X, top 200, MAP</h2>
+            <p style="margin:0; color:dark-gray; font-size:14px;">
+        0-indexed. NNNNNNNNNN = 0123456789<br>
+        e.g. G6A7U8 is NNNNNNGAUN<br>
+        e.g. U0U1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is UUNNNNNNNN<br><br>
+        Mouse over each node for more information.<br>
+        Rank refers to the order in which byte-pair encoding (BPE) identified
+         the motifs, adjusted for k-mer size. For example, rank 1 means that
+         it was the first k-mer of its length to be identified, making it the
+         most frequent motif of its length.<br>
+        Count is the number of times the motif appears in the high-editing
+         population. The size of a node also roughly corresponds to
+         its prevalence.<br>
+        Average editing is taken across the entire population of sequences,
+         not just the high-editing population.
+    </p>
+        </div>
+        
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#000000", "id": "G3", "label": "G3", "shape": "dot", "size": 10.1, "title": "Seq: G3\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 39.345, "y": -306.0}, {"color": "#fca689", "id": "G3U4U5", "label": "G3U4U5", "shape": "dot", "size": 17.3, "title": "Seq: G3U4U5\n            Rank: 1\n            Count: 73\n            Avg editing: 0.009\n            ", "x": 51.345, "y": -234.0}, {"color": "#fdc5ae", "id": "U4U5", "label": "U4U5", "shape": "dot", "size": 23.700000000000003, "title": "Seq: U4U5\n            Rank: 1\n            Count: 137\n            Avg editing: 0.008\n            ", "x": 122.35, "y": -306.0}, {"color": "#000000", "id": "U4", "label": "U4", "shape": "dot", "size": 10.1, "title": "Seq: U4\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 122.35, "y": -378.0}, {"color": "#000000", "id": "U5", "label": "U5", "shape": "dot", "size": 10.1, "title": "Seq: U5\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 205.35, "y": -378.0}, {"color": "#fcb89e", "id": "C6C7G8", "label": "C6C7G8", "shape": "dot", "size": 15.7, "title": "Seq: C6C7G8\n            Rank: 2\n            Count: 57\n            Avg editing: 0.008\n            ", "x": 420.35, "y": -234.0}, {"color": "#800610", "id": "C6C7G8C9", "label": "C6C7G8C9", "shape": "dot", "size": 15.600000000000001, "title": "Seq: C6C7G8C9\n            Rank: 1\n            Count: 56\n            Avg editing: 0.017\n            ", "x": 434.35, "y": -162.0}, {"color": "#000000", "id": "C9", "label": "C9", "shape": "dot", "size": 10.1, "title": "Seq: C9\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 514.35, "y": -234.0}, {"color": "#fee0d2", "id": "C6C7", "label": "C6C7", "shape": "dot", "size": 17.3, "title": "Seq: C6C7\n            Rank: 2\n            Count: 73\n            Avg editing: 0.007\n            ", "x": 380.35, "y": -306.0}, {"color": "#000000", "id": "G8", "label": "G8", "shape": "dot", "size": 10.1, "title": "Seq: G8\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 461.35, "y": -306.0}, {"color": "#000000", "id": "C6", "label": "C6", "shape": "dot", "size": 10.1, "title": "Seq: C6\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 370.35, "y": -378.0}, {"color": "#000000", "id": "C7", "label": "C7", "shape": "dot", "size": 10.1, "title": "Seq: C7\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 442.35, "y": -378.0}, {"color": "#000000", "id": "G6", "label": "G6", "shape": "dot", "size": 10.1, "title": "Seq: G6\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 703.35, "y": -234.0}, {"color": "#7a0510", "id": "G6A7U8U9", "label": "G6A7U8U9", "shape": "dot", "size": 14.7, "title": "Seq: G6A7U8U9\n            Rank: 2\n            Count: 47\n            Avg editing: 0.017\n            ", "x": 749.35, "y": -162.0}, {"color": "#fca98c", "id": "A7U8U9", "label": "A7U8U9", "shape": "dot", "size": 15.2, "title": "Seq: A7U8U9\n            Rank: 3\n            Count: 52\n            Avg editing: 0.009\n            ", "x": 798.35, "y": -234.0}, {"color": "#000000", "id": "A7", "label": "A7", "shape": "dot", "size": 10.1, "title": "Seq: A7\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 756.35, "y": -306.0}, {"color": "#fee9df", "id": "U8U9", "label": "U8U9", "shape": "dot", "size": 15.600000000000001, "title": "Seq: U8U9\n            Rank: 3\n            Count: 56\n            Avg editing: 0.006\n            ", "x": 839.35, "y": -306.0}, {"color": "#000000", "id": "U8", "label": "U8", "shape": "dot", "size": 10.1, "title": "Seq: U8\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 803.35, "y": -378.0}, {"color": "#000000", "id": "U9", "label": "U9", "shape": "dot", "size": 10.1, "title": "Seq: U9\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 875.35, "y": -378.0}, {"color": "#000000", "id": "A3", "label": "A3", "shape": "dot", "size": 10.1, "title": "Seq: A3\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 205.35, "y": -306.0}, {"color": "#fdc7b2", "id": "A3U4U5", "label": "A3U4U5", "shape": "dot", "size": 13.9, "title": "Seq: A3U4U5\n            Rank: 5\n            Count: 39\n            Avg editing: 0.008\n            ", "x": 182.35, "y": -234.0}, {"color": "#000000", "id": "G1", "label": "G1", "shape": "dot", "size": 10.1, "title": "Seq: G1\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 947.35, "y": -378.0}, {"color": "#fff5f0", "id": "G1A2", "label": "G1A2", "shape": "dot", "size": 13.6, "title": "Seq: G1A2\n            Rank: 5\n            Count: 36\n            Avg editing: 0.005\n            ", "x": 983.35, "y": -306.0}, {"color": "#000000", "id": "A2", "label": "A2", "shape": "dot", "size": 10.1, "title": "Seq: A2\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 1019.3, "y": -378.0}, {"color": "#000000", "id": "U1", "label": "U1", "shape": "dot", "size": 10.1, "title": "Seq: U1\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 1091.3, "y": -378.0}, {"color": "#ffede5", "id": "U1U2", "label": "U1U2", "shape": "dot", "size": 13.2, "title": "Seq: U1U2\n            Rank: 6\n            Count: 32\n            Avg editing: 0.006\n            ", "x": 1138.3, "y": -306.0}, {"color": "#000000", "id": "U2", "label": "U2", "shape": "dot", "size": 10.1, "title": "Seq: U2\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 1163.3, "y": -378.0}, {"color": "#000000", "id": "G4", "label": "G4", "shape": "dot", "size": 10.1, "title": "Seq: G4\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 288.35, "y": -378.0}, {"color": "#ffece4", "id": "G4U5", "label": "G4U5", "shape": "dot", "size": 13.2, "title": "Seq: G4U5\n            Rank: 7\n            Count: 32\n            Avg editing: 0.006\n            ", "x": 288.35, "y": -306.0}, {"color": "#000000", "id": "U6", "label": "U6", "shape": "dot", "size": 10.1, "title": "Seq: U6\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 690.35, "y": -90.0}, {"color": "#67000d", "id": "U6G7A8C9", "label": "U6G7A8C9", "shape": "dot", "size": 13.2, "title": "Seq: U6G7A8C9\n            Rank: 3\n            Count: 32\n            Avg editing: 0.018\n            ", "x": 643.35, "y": -18.0}, {"color": "#fc9272", "id": "G7A8C9", "label": "G7A8C9", "shape": "dot", "size": 14.600000000000001, "title": "Seq: G7A8C9\n            Rank: 4\n            Count: 46\n            Avg editing: 0.010\n            ", "x": 596.35, "y": -90.0}, {"color": "#000000", "id": "G7", "label": "G7", "shape": "dot", "size": 10.1, "title": "Seq: G7\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 637.35, "y": -162.0}, {"color": "#fee3d6", "id": "A8C9", "label": "A8C9", "shape": "dot", "size": 15.100000000000001, "title": "Seq: A8C9\n            Rank: 4\n            Count: 51\n            Avg editing: 0.006\n            ", "x": 556.35, "y": -162.0}, {"color": "#000000", "id": "A8", "label": "A8", "shape": "dot", "size": 10.1, "title": "Seq: A8\n            Rank: None\n            Count: 0\n            Avg editing: nan\n            ", "x": 586.35, "y": -234.0}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "G3", "to": "G3U4U5"}, {"arrows": "to", "from": "U4U5", "to": "G3U4U5"}, {"arrows": "to", "from": "U4U5", "to": "A3U4U5"}, {"arrows": "to", "from": "U4", "to": "U4U5"}, {"arrows": "to", "from": "U5", "to": "U4U5"}, {"arrows": "to", "from": "U5", "to": "G4U5"}, {"arrows": "to", "from": "C6C7G8", "to": "C6C7G8C9"}, {"arrows": "to", "from": "C9", "to": "C6C7G8C9"}, {"arrows": "to", "from": "C9", "to": "A8C9"}, {"arrows": "to", "from": "C6C7", "to": "C6C7G8"}, {"arrows": "to", "from": "G8", "to": "C6C7G8"}, {"arrows": "to", "from": "C6", "to": "C6C7"}, {"arrows": "to", "from": "C7", "to": "C6C7"}, {"arrows": "to", "from": "G6", "to": "G6A7U8U9"}, {"arrows": "to", "from": "A7U8U9", "to": "G6A7U8U9"}, {"arrows": "to", "from": "A7", "to": "A7U8U9"}, {"arrows": "to", "from": "U8U9", "to": "A7U8U9"}, {"arrows": "to", "from": "U8", "to": "U8U9"}, {"arrows": "to", "from": "U9", "to": "U8U9"}, {"arrows": "to", "from": "A3", "to": "A3U4U5"}, {"arrows": "to", "from": "G1", "to": "G1A2"}, {"arrows": "to", "from": "A2", "to": "G1A2"}, {"arrows": "to", "from": "U1", "to": "U1U2"}, {"arrows": "to", "from": "U2", "to": "U1U2"}, {"arrows": "to", "from": "G4", "to": "G4U5"}, {"arrows": "to", "from": "U6", "to": "U6G7A8C9"}, {"arrows": "to", "from": "G7A8C9", "to": "U6G7A8C9"}, {"arrows": "to", "from": "G7", "to": "G7A8C9"}, {"arrows": "to", "from": "A8C9", "to": "G7A8C9"}, {"arrows": "to", "from": "A8", "to": "A8C9"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "straight"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": false,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

@@ -5,7 +5,7 @@
 \title{Transforms cleaned EMERGe data into a richer representation using
 multiple correspondence analysis (MCA).}
 \usage{
-append_mca(X, nf = 50, top_quantile = 0.999)
+append_mca(X, nf = 50, top_quantile = 0.999, get_eigs = FALSE)
 }
 \arguments{
 \item{X}{(tibble) EMERGe dataset with 'n10' and 'postmean' columns.
@@ -18,6 +18,9 @@ The 'postmean' column may be obtained from emergeR::stats().}
 sequences are considered to be top performers.
 For a dataset with ~900,000 n10 sequences, the default
 value selects ~900 top sequences for further analysis.}
+
+\item{get_eigs}{(logical) default FALSE, return eigs in a list with the
+MCA tibble for debug purposes.}
 }
 \value{
 A list with two components:

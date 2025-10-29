@@ -12,6 +12,8 @@
 #'                     sequences are considered to be top performers.
 #'                     For a dataset with ~900,000 n10 sequences, the default
 #'                     value selects ~900 top sequences for further analysis.
+#' @param get_eigs (logical) default FALSE, return eigs in a list with the
+#'                 MCA tibble for debug purposes.
 #' @return A list with two components:
 #'   \describe{
 #'     \item{edit_top}{A tibble containing the subset of EMERGe data
@@ -26,18 +28,24 @@
 #' @importFrom stats quantile
 #' @importFrom dplyr filter
 #' @importFrom magrittr %>%
-append_mca <- function(X, nf = 50, top_quantile = 0.999) {
+append_mca <- function(X, nf = 50, top_quantile = 0.999, get_eigs = FALSE) {
   Xfac <- factor_sequences(X = X)
-  mca  <- dudi.acm(df = Xfac, nf = 50, scannf = FALSE)
+  mca  <- dudi.acm(df = Xfac, nf = nf, scannf = FALSE)
   
   top_cutoff <- quantile(X$postmean, top_quantile)
-  top_seqs   <- X$n10[X$postmean >= top_cutoff]
-  X_top      <- X %>%
-    filter(n10 %in% top_seqs)
   
-  edit_top  <- get_MCs(X = X_top, mca = mca)
+  X_mca <- bind_cols(X, as_tibble(mca$li)) %>%
+    filter(postmean >= top_cutoff) %>%
+    select(
+      n10, n, k,
+      postmean, lower_cred, upper_cred,
+      mle, lower_ci, upper_ci,
+      alpha, beta,
+      everything()
+    )
   
-  list(edit_top = edit_top, eigens = mca$eig)
+  if (get_eigs) return(list(X_mca = X_mca, eigens = mca$eig))
+  return(X_mca)
 }
 
 #' Factorizes n10 sequences into position-wise categorical variables.
@@ -47,43 +55,32 @@ append_mca <- function(X, nf = 50, top_quantile = 0.999) {
 #' position. Each column is a factor with levels A, G, C, T.
 #' 
 #' @param X (data frame) with an 'n10' column of DNA sequences.
+#' @param L (integer), default 10, length of n10 sequence
 #' @return data frame with factored nucleotides from n10 sequences.
 #'
 #' @keywords internal
 #' @noRd
 #'
 #' @importFrom magrittr %>%
-factor_sequences <- function(X) {
+factor_sequences <- function(
+    X, L = 10, drop_unused = TRUE, drop_constant = TRUE
+) {
   Xfac <- X$n10 %>%
-    strsplit("") %>% do.call(rbind, .) %>% as.data.frame()
+    strsplit("") %>%
+    do.call(rbind, .) %>%
+    as.data.frame()
   colnames(Xfac) <- paste0("p", 1:L)
+  
   Xfac[] <- lapply(Xfac, function(x) factor(x, levels = c("A", "G", "C", "T")))
-}
-
-#' Extract MCA scores for EMERGe guides.
-#' 
-#' Joins MCA coordinates with the underlying EMERGe dataset, keyed by
-#' N10 sequence.
-#' 
-#' @param X (data frame) with an 'n10' column of DNA sequences.
-#' @param mca (MCA result) an object returned by dudi.acm or similar,
-#'            containing factor scores in the '$li' comoponent.
-#' @return (tibble) X data frame with mca data left joined by n10.
-#' 
-#' @keywords internal
-#' @noRd
-#'
-#' @importFrom tibble as_tibble
-#' @importFrom dplyr mutate left_join filter select
-get_MCs <- function(X, mca) {
-  scores <- as_tibble(mca$li) %>%
-    mutate(N10 = X$N10) %>%
-    left_join(X, by = "N10") %>%
-    select(
-      n10, n, k,
-      postmean, lower_cred, upper_cred,
-      mle, lower_ci, upper_ci,
-      alpha, beta,
-      everything()
-    )
+  
+  if (drop_unused) {
+    Xfac[] <- lapply(Xfac, droplevels)
+  }
+  
+  if (drop_constant) {
+    keep <- vapply(Xfac, nlevels, integer(1)) > 1L
+    Xfac <- Xfac[, keep, drop = FALSE]
+  }
+  
+  Xfac
 }

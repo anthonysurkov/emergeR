@@ -3,17 +3,24 @@ services:
         &base
         build: .
         image: emerger:base
+
     dev:
         <<: *base
-        working_dir: /work
+        working_dir: /home/rstudio/work
+        environment:
+            PASSWORD: "oligonucleotide"
         volumes:
-            - ./:/work
-        command: R
-        tty: true
-        stdin_open: true
+            - ./:/home/rstudio/work
+            - rlib:/home/rstudio/R
+        command: bash
+        restart: unless-stopped
+
     prod:
         <<: *base
         working_dir: /pkg
-        command: R
+        command: bash
         tty: true
         stdin_open: true
+
+volumes:
+    rlib:

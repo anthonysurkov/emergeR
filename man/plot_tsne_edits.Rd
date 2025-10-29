@@ -4,7 +4,7 @@
 \alias{plot_tsne_edits}
 \title{Plots t-SNE coordinates colored by posterior mean editing.}
 \usage{
-plot_tsne_edits(X_tsne)
+plot_tsne_edits(X)
 }
 \arguments{
 \item{X_tsne}{(tibble) EMERGe data with at minimum 'tsne1', 'tsne2', and'postmean' columns.}
